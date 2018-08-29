@@ -131,8 +131,8 @@ public class FindScenario {
 		for (Map.Entry<String, String> entry : secToBaseStringMap.entrySet()){
 			
 			String baseString=entry.getValue();
-			String searchString="ca";
-//			String searchString="db";
+//			String searchString="ca";
+			String searchString="db";
 			indexesReturned = getIndex(baseString, searchString);
 			if (indexesReturned.size() == 0) {
 //				Order order=new Order();

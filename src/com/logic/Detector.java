@@ -1,4 +1,6 @@
 package com.logic;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,7 +69,7 @@ public class Detector {
 			
 			flagged=findscenario.detectScenario(securityToOrdersMap, strings);
 			
-			Scenario scenario = new Scenario("Scenario 2");
+			Scenario scenario = new Scenario("Scenario found");
 			int scenarioId = 0 ;
 			
 			
@@ -75,17 +77,36 @@ public class Detector {
 				System.out.println("No scenarios found");
 			}	
 		 	else{
-			for(List<Order> flaggedorder : flagged){
-			
-				frontRunningScenarioDAO.addScenario(scenario);
-				scenarioId = frontRunningScenarioDAO.findnextId();
-			for (Order order2 : flaggedorder) {
+		 		
+		 	Connection connection = null;
+		 	try {
+		 		connection = MyConnection.getMyConnection();
+				connection.setAutoCommit(false);
 				
-				System.out.println(order2.getSecurity().getIsin()+order2.getTraderType()+order2.getTradeType());
-				int changed = orderDAO.updateOrder(order2, scenarioId);
-				System.out.println("Changed: " + changed);
+				for(List<Order> flaggedorder : flagged){
+					
+					frontRunningScenarioDAO.addScenario(scenario,connection);
+					scenarioId = frontRunningScenarioDAO.findnextId(connection);
+					for (Order order2 : flaggedorder) {
+					
+						System.out.println(order2.getSecurity().getIsin()+order2.getTraderType()+order2.getTradeType()+order2.getSecurity().getSecurityType());
+						int changed = orderDAO.updateOrder(order2, scenarioId, connection);
+						System.out.println("Changed: " + changed);
+					}
+				}
+				connection.commit();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				try {
+					connection.rollback();
+				} catch (Exception e2) {
+					// TODO: handle exception
+					e2.printStackTrace();
+				}
 			}
-		}
+		 		
+			
 			
 	}
 }

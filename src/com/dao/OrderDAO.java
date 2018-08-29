@@ -1,5 +1,7 @@
 package com.dao;
 import com.connections.MyConnection;
+
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import com.pojos.*;
 import java.sql.ResultSet;
@@ -53,14 +55,14 @@ public class OrderDAO {
 		return orders;
 	}
 
-	public int updateOrder(Order order,int scenarioId){
+	public int updateOrder(Order order,int scenarioId, Connection connection){
 		
 		 
 		int r=0;
 		String UPDATE_ORDER = "update orders set scenario_Id = ? where orderid=?";
 		
 		try {
-			PreparedStatement ps = MyConnection.getMyConnection().prepareStatement(UPDATE_ORDER);
+			PreparedStatement ps = connection.prepareStatement(UPDATE_ORDER);
 			ps.setInt(1, scenarioId);
 			ps.setInt(2, order.getOrderId());
 			r = ps.executeUpdate();
