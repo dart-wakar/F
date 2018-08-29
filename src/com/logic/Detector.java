@@ -62,18 +62,18 @@ public class Detector {
 			securityToOrdersMap = findscenario.getSecurityToOrdersMap(orders);
 			System.out.println(securityToOrdersMap);
 	
-			Map<String,String> strings=new HashMap<>();
-			strings=findscenario.preprocess(securityToOrdersMap);
+			Map<String,String> SecToBaseStringsMap=new HashMap<>();
+			SecToBaseStringsMap=findscenario.preprocess(securityToOrdersMap);
 			
-			List<List<Order>> flagged=new ArrayList<>();
+			List<List<Order>> flaggedOrders=new ArrayList<>();
 			
-			flagged=findscenario.detectScenario(securityToOrdersMap, strings);
+			flaggedOrders=findscenario.detectScenario(securityToOrdersMap, SecToBaseStringsMap);
 			
 			Scenario scenario = new Scenario("Scenario found");
 			int scenarioId = 0 ;
 			
 			
-			if(flagged.size()==0){
+			if(flaggedOrders.size()==0){
 				System.out.println("No scenarios found");
 			}	
 		 	else{
@@ -83,7 +83,7 @@ public class Detector {
 		 		connection = MyConnection.getMyConnection();
 				connection.setAutoCommit(false);
 				
-				for(List<Order> flaggedorder : flagged){
+				for(List<Order> flaggedorder : flaggedOrders){
 					
 					frontRunningScenarioDAO.addScenario(scenario,connection);
 					scenarioId = frontRunningScenarioDAO.findnextId(connection);

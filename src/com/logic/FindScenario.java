@@ -37,30 +37,7 @@ public class FindScenario {
 	}
 	
 	
-	public String get2(char a,char b,char c){//c for security type
-		String s;
-		
-		if(a=='f'){
-			if(b=='b'){
-				s="1";
-			}
-			else
-				s= "3";
-		}
-		else{
-			if(b=='b'){
-				s= "2";
-			}
-			else
-				s="4";
-			 
-		}
-		
-		 
-		return s;
-		
-	}
-	public String get(char traderType,char tradeType,char securityType){
+	public String encodeTrade(char traderType,char tradeType,char securityType){
 		String s;
 		
 		if(traderType=='f'){
@@ -111,8 +88,8 @@ public class FindScenario {
 					char otype=order.getTradeType();
 					char stype ='e';//by default its equity
 					stype = order.getSecurity().getSecurityType().toString().toLowerCase().charAt(0);
-					String rtype=get(type,otype,stype);
-					baseString+=rtype;
+					String encodedString=encodeTrade(type,otype,stype);
+					baseString+=encodedString;
 					
 					 
 			}
@@ -142,15 +119,16 @@ public class FindScenario {
 				return flaggedOrders;
 				
 			} else {
-				List<Order> orders = secToOrderMap.get(entry.getKey());
-				List<Order> oneFlagOrder; 
 				
-				for(List<Integer> l:indexesReturned){
-					oneFlagOrder = new ArrayList<>();
-				for (int flaggedIndex : l) {
-					oneFlagOrder.add(orders.get(flaggedIndex));
-				}
-				flaggedOrders.add(oneFlagOrder);
+				List<Order> orders = secToOrderMap.get(entry.getKey());
+				List<Order> singleScenarioOrders; 
+				
+				for(List<Integer> l:indexesReturned){	
+					singleScenarioOrders = new ArrayList<>();
+					for (int flaggedIndex : l) {
+						singleScenarioOrders.add(orders.get(flaggedIndex));
+					}
+				flaggedOrders.add(singleScenarioOrders);
 			}			 
 		}	
 	} 
@@ -164,6 +142,7 @@ public class FindScenario {
 		 int n=baseString.length();
 
 		 List<List<Integer>> allIndexes = new ArrayList<>();
+		 
 		 List<Integer> l = new ArrayList<>();
 		 int j = 0;
 		 for (int i = 0; i < n && j < m;i++){
